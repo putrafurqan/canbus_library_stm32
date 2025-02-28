@@ -1,0 +1,103 @@
+{  
+    "version": "2.0.0",  
+    "tasks": [  
+		// TASK 1 : Clean Rebuild + Flash (HAL) 
+        {  
+            "label": "HAL: Clean Rebuild + Flash",  
+            "type": "shell",  
+            "command": "make",  
+            "args": [  
+                "clean_rebuild_flash",  
+            ],  
+            "options": {  
+                "cwd": "${workspaceFolder}"  
+            },  
+            "group": {  
+                "kind": "build",  
+                "isDefault": true  
+            },  
+            "presentation": {  
+                "reveal": "always"  
+            },  
+            "problemMatcher": "$msCompile"  
+        },
+        {  
+            "label": "HAL: Clean Rebuild",  
+            "type": "shell",  
+            "command": "make",  
+            "args": [  
+                "clean_rebuild", "compile"  
+            ],  
+            "options": {  
+                "cwd": "${workspaceFolder}"  
+            },  
+            "group": {  
+                "kind": "build",  
+                "isDefault": true  
+            },  
+            "presentation": {  
+                "reveal": "always"  
+            },  
+            "problemMatcher": "$msCompile"  
+        },
+        {  
+            "label": "HAL: List Interfaces",  
+            "type": "shell",  
+            "command": "make",  
+            "args": [  
+                "list_interfaces",  
+            ],  
+            "options": {  
+                "cwd": "${workspaceFolder}"  
+            },  
+            "group": {  
+                "kind": "build",  
+                "isDefault": true  
+            },  
+            "presentation": {  
+                "reveal": "always"  
+            },  
+            "problemMatcher": "$msCompile"  
+        },
+        {  
+            "label": "HAL: Compile",  
+            "type": "shell",  
+            "command": "make",  
+            "args": [  
+                "compile",  
+            ],  
+            "options": {  
+                "cwd": "${workspaceFolder}"  
+            },  
+            "group": {  
+                "kind": "build",  
+                "isDefault": true  
+            },  
+            "presentation": {  
+                "reveal": "always"  
+            },  
+            "problemMatcher": "$msCompile"  
+        },
+		// TASK 2 : Flash (HAL)
+		{  
+			"label": "HAL: Flash",  
+			"type": "shell",  
+			"command": "make",  
+			"args": [  
+				"flash",  
+			],  
+			"options": {  
+				"cwd": "${workspaceFolder}"  
+			},  
+			"group": {  
+				"kind": "build",  
+				"isDefault": true  
+			},  
+			"presentation": {  
+				"reveal": "always"  
+			},  
+			"problemMatcher": "$msCompile"  
+		},
+
+    ]  
+}  

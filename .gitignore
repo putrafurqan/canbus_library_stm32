@@ -1,0 +1,7 @@
+build/
+CMakeFiles/
+CMakeCache.txt
+Interface/CMakeFiles/
+Library/CMakeFiles/
+Docs/html/
+Docs/Doxyfile.bak
