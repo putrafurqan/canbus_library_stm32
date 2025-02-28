@@ -19,10 +19,7 @@ This library provides an easy-to-use interface for CAN bus communication on STM3
 ### CAN ID Structure (Standard ID)
 The CAN ID is structured as follows:
 
-| Bit-n | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|-------|----|---|---|---|---|---|---|---|---|---|---|
-| Data  | 0  | 0 | 1 | Device ID | Command ID |
-
+![image](https://github.com/user-attachments/assets/8ab1faac-e5cd-4776-b4ca-98b0fe53e37c)
 - **Device ID**: Identifies the device. The number of LED blinks on the device indicates its Device ID.
 - **Command ID**: Specifies the type of message or command.
 
@@ -32,106 +29,87 @@ The CAN ID is structured as follows:
 
 The library supports the following message types:
 
-#### 1. **Get Driver Status** (Command ID: `0`)
-- **Type**: Remote Transmission Request (RTR)
-- **Description**: Requests the driver status, including error codes, PWM values, and current measurements.
-
-| Byte | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|------|---|---|---|---|---|---|---|---|
-| Data | D | C | B | A |
-- **A**: `int8` Device ID
-- **B**: `int8` Error code
-- **C**: `int16` Actual PWM value (1000 = 100.0%)
-- **D**: `float32` Current in Amperes
+Each CAN message is identified by a `Command ID`, which determines the type of data being transmitted. The library processes the received data based on the `Command ID` and stores it in the `message_` structure.
 
 ---
 
-#### 2. **Get Measured Value** (Command ID: `1`)
-- **Type**: Remote Transmission Request (RTR)
-- **Description**: Requests measured values like speed and position.
+### Command ID: `1`
+![image](https://github.com/user-attachments/assets/c1179404-273f-46c0-9e93-2a79f58aa2a7)
+- **Description**: Single 8-bit integer value.
+- **Data Structure**:
+  - Byte 0: `int8` value.
+  
 
-| Byte | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|------|---|---|---|---|---|---|---|---|
-| Data | B | A |
-- **A**: `float32` Speed in RPS (Revolutions Per Second)
-- **B**: `float32` Position in rotations (1 per rotation)
 
 ---
 
-#### 3. **Set PWM (Open-Loop)** (Command ID: `2`)
-- **Type**: Data Frame
-- **Description**: Sets the PWM value for open-loop control.
+### Command ID: `2`
 
-| Byte | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|------|---|---|---|---|---|---|---|---|
-| Data | - | - | - | - | - | B | A |
-- **A**: `int8`
-  - `0`: Maintain previous control mode
-  - `1`: Switch to PWM control mode
-- **B**: `int16` Desired PWM value (1000 = 100.0%)
+![image](https://github.com/user-attachments/assets/66c4e787-52c3-4ac6-b19e-66b469faaddc)
+
+- **Description**: Single 32-bit floating-point value.
+- **Data Structure**:
+  - Bytes 0-3: `float32` value.
 
 ---
 
-#### 4. **Set Speed** (Command ID: `3`)
-- **Type**: Data Frame
-- **Description**: Sets the desired speed in RPS.
+### Command ID: `3`
 
-| Byte | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|------|---|---|---|---|---|---|---|---|
-| Data | - | - | - | B | A |
-- **A**: `int8`
-  - `0`: Maintain previous control mode
-  - `1`: Switch to speed control mode
-- **B**: `float32` Desired speed in RPS
+![image](https://github.com/user-attachments/assets/e0b1bae0-84a3-4a15-a1fc-8cf72c3b83db)
+
+
+- **Description**: Two 32-bit floating-point values.
+- **Data Structure**:
+  - Bytes 0-3: `float32` value 1.
+  - Bytes 4-7: `float32` value 2.
 
 ---
 
-#### 5. **Set Position** (Command ID: `4`)
-- **Type**: Data Frame
-- **Description**: Sets the desired position.
+### Command ID: `4`
 
-| Byte | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|------|---|---|---|---|---|---|---|---|
-| Data | - | - | - | B | A |
-- **A**: `int8`
-  - `0`: Maintain previous control mode
-  - `1`: Switch to position control mode
-- **B**: `float32` Desired position
+![image](https://github.com/user-attachments/assets/e39bddc0-0d1a-4793-a484-8f1063b696ef)
+
+- **Description**: Single 32-bit integer value.
+- **Data Structure**:
+  - Bytes 0-3: `int32` value.
 
 ---
 
-#### 6. **Set Kp & Ki Speed** (Command ID: `5`)
-- **Type**: Data Frame
-- **Description**: Sets the proportional (Kp) and integral (Ki) gains for speed control.
+### Command ID: `5`
 
-| Byte | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|------|---|---|---|---|---|---|---|---|
-| Data | B | A |
-- **A**: `float32` Desired Kp value
-- **B**: `float32` Desired Ki value
+![image](https://github.com/user-attachments/assets/fa2e7fa6-8917-46c3-bb82-104ab69055f4)
 
----
 
-#### 7. **Set Kp Position** (Command ID: `6`)
-- **Type**: Data Frame
-- **Description**: Sets the proportional (Kp) gain for position control.
-
-| Byte | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|------|---|---|---|---|---|---|---|---|
-| Data | A |
-- **A**: `float32` Desired Kp value
+- **Description**: Two 32-bit integer values.
+- **Data Structure**:
+  - Bytes 0-3: `int32` value 1.
+  - Bytes 4-7: `int32` value 2.
 
 ---
 
-#### 8. **Set Max Values** (Command ID: `7`)
-- **Type**: Data Frame
-- **Description**: Sets the maximum PWM and speed values.
+### Command ID: `6`
 
-| Byte | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|------|---|---|---|---|---|---|---|---|
-| Data | B | A |
-- **A**: `int16` Maximum PWM value (1000 = 100.0%)
-- **B**: `float32` Maximum speed in RPS
+![image](https://github.com/user-attachments/assets/130cfbab-26c0-43df-b962-e719e1abeae1)
+
+
+- **Description**: Four 16-bit integer values.
+- **Data Structure**:
+  - Bytes 0-1: `int16` value 1.
+  - Bytes 2-3: `int16` value 2.
+  - Bytes 4-5: `int16` value 3.
+  - Bytes 6-7: `int16` value 4.
+
+---
+
+### Command ID: `10`
+
+![image](https://github.com/user-attachments/assets/e0b1bae0-84a3-4a15-a1fc-8cf72c3b83db)
+
+- **Description**: Motor setpoint values (speed in RPS).
+- **Data Structure**:
+  - Bytes 0-3: `float32` setpoint for Motor 1 (RPS).
+  - Bytes 4-7: `float32` setpoint for Motor 2 (RPS).
+
 
 ---
 
